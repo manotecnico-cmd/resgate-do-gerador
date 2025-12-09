@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Resgate do Gerador – Modo Emergência (Básico v1.0.1)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #020617;
+      color: #e5e7eb;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+    .game-container {
+      background: radial-gradient(circle at top, #1e293b, #020617 55%);
+      border-radius: 20px;
+      padding: 24px 20px;
+      max-width: 520px;
+      width: 92%;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7);
+      border: 1px solid #1f2937;
+    }
+    h1 {
+      font-size: 1.5rem;
+      margin-top: 0;
+      margin-bottom: 8px;
+      color: #38bdf8;
+      text-align: center;
+    }
+    h2 {
+      font-size: 1.1rem;
+      margin: 0 0 8px 0;
+      text-align: center;
+      color: #e5e7eb;
+    }
+    .subtitle {
+      font-size: 0.85rem;
+      color: #9ca3af;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+    .badge {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #fbbf24;
+      text-align: center;
+      margin-bottom: 6px;
+    }
+    .disclaimer {
+      font-size: 0.75rem;
+      color: #9ca3af;
+      text-align: center;
+      margin-bottom: 16px;
+    }
+    .question {
+      margin-bottom: 16px;
+      font-size: 1rem;
+      line-height: 1.4;
+    }
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    button.option-btn {
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      background: #0b1120;
+      color: #e5e7eb;
+      text-align: left;
+      transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.1s;
+      font-size: 0.95rem;
+      border: 1px solid #1f2937;
+    }
+    button.option-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.6);
+      background: #111827;
+    }
+    button.option-btn:active {
+      transform: translateY(0);
+      box-shadow: none;
+    }
+    .feedback {
+      min-height: 40px;
+      font-size: 0.9rem;
+      margin-bottom: 12px;
+    }
+    .score {
+      font-size: 0.9rem;
+      color: #a5b4fc;
+      margin-bottom: 8px;
+    }
+    .mentor {
+      font-size: 0.85rem;
+      color: #facc15;
+      margin-bottom: 8px;
+    }
+
+    .btn-primary {
+      display: inline-block;
+      padding: 10px 18px;
+      border-radius: 999px;
+      background: #38bdf8;
+      color: #020617;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 0.95rem;
+      transition: background 0.1s, transform 0.08s, box-shadow 0.08s;
+      text-align: center;
+      width: 100%;
+      margin-top: 8px;
+    }
+    .btn-primary:hover {
+      background: #0ea5e9;
+      transform: translateY(-1px);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.5);
+    }
+    .btn-primary:active {
+      transform: translateY(0);
+      box-shadow: none;
+    }
+    .btn-ghost {
+      display: inline-block;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: transparent;
+      color: #9ca3af;
+      border: 1px solid #1f2937;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: background 0.1s, color 0.1s, transform 0.08s;
+      width: 100%;
+      margin-top: 6px;
+    }
+    .btn-ghost:hover {
+      background: #020617;
+      color: #e5e7eb;
+      transform: translateY(-1px);
+    }
+    .tagline {
+      font-size: 0.8rem;
+      color: #6b7280;
+      margin-top: 10px;
+      text-align: center;
+    }
+    .small {
+      font-size: 0.8rem;
+    }
+    .mt-8 { margin-top: 8px; }
+    .mt-16 { margin-top: 16px; }
+    .highlight { color: #38bdf8; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <div class="game-container">
+
+    <!-- MENU -->
+    <div id="menuScreen">
+      <h1>Resgate do Gerador</h1>
+      <div class="badge">Modo Emergência · Básico experimental</div>
+      <div class="subtitle">
+        Simulador introdutório para quem gosta de gerador e quer treinar decisões básicas de emergência.
+      </div>
+      <div class="disclaimer">
+        Este jogo é voltado a iniciantes e entusiastas. Não substitui manuais, treinamentos oficiais
+        ou procedimentos específicos de fabricantes. Use apenas como apoio educativo e diversão técnica.
+      </div>
+
+      <button class="btn-primary" onclick="startGame()">
+        Começar plantão de emergência
+      </button>
+
+      <button class="btn-ghost" onclick="showCredits()">
+        Ver créditos
+      </button>
+
+      <div class="tagline">
+        Infinita Geradores · Versão Básica v1.0.1 · Emergência
+      </div>
+    </div>
+
+    <!-- JOGO -->
+      <div id="gameScreen" style="display:none;">
+      <div class="mentor" id="mentorBox"></div>
+      <div class="score" id="score"></div>
+      <div class="question" id="question"></div>
+      <div class="options" id="options"></div>
+      <div class="feedback" id="feedback"></div>
+      <button class="btn-primary" id="nextBtn" style="display:none;">Próxima ocorrência</button>
+      <button class="btn-ghost" id="retryBtn" style="display:none;">Tentar novamente esta ocorrência</button>
+      <button class="btn-ghost" onclick="backToMenu()">Voltar ao menu</button>
+    </div>
+
+
+    <!-- FINAL -->
+    <div id="endScreen" style="display:none;">
+      <h2>Fim do plantão</h2>
+      <p id="finalMessage"></p>
+      <p class="small mt-8" id="finalScore"></p>
+      <button class="btn-primary" onclick="restartGame()">
+        Jogar de novo
+      </button>
+      <button class="btn-ghost" onclick="backToMenu()">
+        Voltar ao menu
+      </button>
+      <div class="tagline mt-16">
+        Versão básica, focada em iniciantes. Em breve: modos Profissional e Especialista.
+      </div>
+    </div>
+
+    <!-- CRÉDITOS -->
+    <div id="creditsScreen" style="display:none;">
+      <h2>Créditos</h2>
+      <p class="small">
+        Conceito, visão e espírito técnico: <span class="highlight">Mano – Infinita Geradores</span>.<br/>
+        IA parceira de plantão: <span class="highlight">Akamai (GMGênio)</span>.
+      </p>
+      <p class="small mt-8">
+        Este é um módulo básico e experimental, voltado a quem está começando ou ama essas máquinas
+        e quer treinar decisões de forma leve e responsável.
+      </p>
+      <button class="btn-ghost mt-16" onclick="backToMenu()">
+        Voltar ao menu
+      </button>
+    </div>
+
+  </div>
+
+  <script>
+    // =========================
+    // PERGUNTAS – MODO EMERGÊNCIA (BÁSICO)
+    // =========================
+    const questionsEmergencia = [
+      // P1
+      {
+        text: "Durante uma falta real de rede, o gerador tenta partir, gira alguns segundos e para, exibindo alarme de 'Falha de Partida'. Qual é o primeiro passo adequado?",
+        options: [
+          {
+            text: "Tentar uma nova partida imediatamente sem olhar os alarmes detalhados.",
+            correct: false,
+            feedback: "Antes de insistir na partida, é importante entender por que o sistema bloqueou."
+          },
+          {
+            text: "Verificar a tensão das baterias e checar as mensagens ativas no controlador.",
+            correct: true,
+            feedback: "Correto. Sem alimentação adequada e sem ler os alarmes, qualquer tentativa vira chute."
+          },
+          {
+            text: "Ajustar manualmente a borboleta do acelerador para 'ajudar a pegar'.",
+            correct: false,
+            feedback: "Interferir mecanicamente sem diagnóstico elétrico pode mascarar o problema e gerar risco."
+          },
+          {
+            text: "Pressupor falha mecânica grave e iniciar desmontagem sem diagnóstico elétrico.",
+            correct: false,
+            feedback: "Ir direto para desmontagem é extremo. Comece sempre pelos sinais e alimentação básica."
+          }
+        ]
+      },
+      // P2
+      {
+        text: "Durante o arranque, o controlador dispara 'Baixa pressão de óleo' antes do motor estabilizar. Qual ação inicial faz mais sentido?",
+        options: [
+          {
+            text: "Verificar nível de óleo, chicote do sensor e funcionamento do pressostato.",
+            correct: true,
+            feedback: "Perfeito. Primeiro confirme se o motor realmente tem óleo e se o sinal do sensor está correto."
+          },
+          {
+            text: "Reiniciar o controlador várias vezes esperando que o alarme desapareça.",
+            correct: false,
+            feedback: "Reiniciar sem checar a causa pode esconder um problema real de lubrificação."
+          },
+          {
+            text: "Suspender a análise do alarme e tentar colocar o gerador em carga assim mesmo.",
+            correct: false,
+            feedback: "Nunca ignore alarme de óleo para colocar em carga. Risco alto de dano ao motor."
+          },
+          {
+            text: "Suspeitar de defeito no motor sem verificar sensores e fiação.",
+            correct: false,
+            feedback: "Comece pelos elementos mais simples: nível, sensor, chicote e conectores."
+          }
+        ]
+      },
+      // P3
+      {
+        text: "O motor pega, sustenta rotação por 2–3 segundos e desliga. O que você verifica primeiro?",
+        options: [
+          {
+            text: "Avaliar se há ar na linha de combustível e se o sistema está adequadamente sangrado.",
+            correct: true,
+            feedback: "Boa. Falhas de alimentação de combustível são causas comuns desse comportamento."
+          },
+          {
+            text: "Pressupor defeito em bicos injetores e já iniciar desmontagem.",
+            correct: false,
+            feedback: "Bicos são mais complexos e caros. Primeiro descarte problemas simples de alimentação."
+          },
+          {
+            text: "Aumentar o tempo de partida no controlador para 'insistir mais'.",
+            correct: false,
+            feedback: "Se o motor não se mantém, insistir apenas força o sistema de partida."
+          },
+          {
+            text: "Suspeitar de falha no alternador mesmo sem o motor estabilizar.",
+            correct: false,
+            feedback: "Alternador não é o alvo principal se o motor nem permanece ligado."
+          }
+        ]
+      },
+      // P4
+      {
+        text: "Após o gerador assumir a emergência, a frequência oscila entre 56–62 Hz. Qual é a abordagem inicial adequada?",
+        options: [
+          {
+            text: "Verificar o atuador/governador eletrônico e a estabilidade do controle de rotação.",
+            correct: true,
+            feedback: "Exato. Oscilação de frequência está diretamente ligada ao controle de rotação do motor."
+          },
+          {
+            text: "Ajustar a carga manualmente, esperando que a frequência se estabilize sozinha.",
+            correct: false,
+            feedback: "A carga influencia, mas o controle de rotação é o ponto central nessa análise."
+          },
+          {
+            text: "Verificar apenas a tensão de saída, pois frequência não é tão importante.",
+            correct: false,
+            feedback: "Frequência é crítica para a maior parte das cargas. Não pode ser ignorada."
+          },
+          {
+            text: "Trocar o combustível acreditando que o diesel pode causar oscilação de frequência.",
+            correct: false,
+            feedback: "Qualidade de combustível pode afetar desempenho, mas não é o primeiro foco aqui."
+          }
+        ]
+      },
+      // P5
+      {
+        text: "O gerador entra em emergência, estabiliza a rotação, mas a tensão está muito abaixo do nominal (por exemplo, 380 V → 310 V). O que deve ser analisado primeiro?",
+        options: [
+          {
+            text: "Verificar o sistema de excitação/AVR e o sinal de feedback de tensão das fases.",
+            correct: true,
+            feedback: "Correto. AVR e sensing de tensão são fundamentais para manter o nível adequado de tensão."
+          },
+          {
+            text: "Reduzir a velocidade do motor para tentar compensar a tensão baixa.",
+            correct: false,
+            feedback: "Frequência e tensão têm relações diferentes. Não corrija tensão alterando rotação."
+          },
+          {
+            text: "Focar apenas no quadro externo sem avaliar o alternador.",
+            correct: false,
+            feedback: "É importante validar o que está acontecendo diretamente no conjunto gerador."
+          },
+          {
+            text: "Assumir que o problema é da carga e não do gerador.",
+            correct: false,
+            feedback: "Antes de culpar a carga, confirme se o gerador está regulando corretamente."
+          }
+        ]
+      },
+      // P6
+      {
+        text: "Depois que o gerador assume a emergência e estabiliza em carga, surge um odor de aquecimento vindo do quadro de transferência. Qual é a ação inicial mais segura?",
+        options: [
+          {
+            text: "Desligar o disjuntor principal com segurança e realizar inspeção visual e térmica.",
+            correct: true,
+            feedback: "Perfeito. Primeiro ato é garantir segurança e só então investigar aquecimentos e conexões."
+          },
+          {
+            text: "Manter o gerador carregado para ver se o cheiro diminui com o tempo.",
+            correct: false,
+            feedback: "Cheiro de queimado é sinal de alerta, não algo para esperar 'passar'."
+          },
+          {
+            text: "Ajustar o AVR acreditando que a tensão pode resolver o aquecimento.",
+            correct: false,
+            feedback: "Aquecimento localizado geralmente está ligado a conexão, carga ou contato, não apenas tensão."
+          },
+          {
+            text: "Procurar mau contato apenas nas tomadas finais do cliente.",
+            correct: false,
+            feedback: "O quadro de transferência também precisa ser verificado com cuidado."
+          }
+        ]
+      },
+      // P7
+      {
+        text: "Durante a falta de rede, o motor gira normalmente, mas não entra em combustão. Qual caminho diagnóstico deve vir primeiro?",
+        options: [
+          {
+            text: "Verificar presença de ar na linha ou obstrução em filtros e mangueiras de combustível.",
+            correct: true,
+            feedback: "Boa. Sem combustível corretamente alimentado, o motor não entra em funcionamento estável."
+          },
+          {
+            text: "Suspeitar diretamente de falha no módulo do atuador.",
+            correct: false,
+            feedback: "Atuador pode falhar, mas é mais lógico descartar problemas simples de alimentação antes."
+          },
+          {
+            text: "Aumentar o tempo de partida no controlador para ver se 'pega no insistente'.",
+            correct: false,
+            feedback: "Insistir na partida sem causa conhecida pode danificar sistema de partida e baterias."
+          },
+          {
+            text: "Pressupor defeito grave no motor sem checar o sistema de alimentação.",
+            correct: false,
+            feedback: "Sempre comece pelo mais básico: combustível, ar e sinais de comando."
+          }
+        ]
+      },
+      // P8
+      {
+        text: "O gerador entra em operação, mas após alguns segundos a tensão colapsa para valores muito baixos. Qual é o ponto inicial de investigação?",
+        options: [
+          {
+            text: "Checar chicotes do AVR e conexões do circuito de sensing de tensão.",
+            correct: true,
+            feedback: "Correto. Uma perda de referência no AVR pode fazer a excitação cair rapidamente."
+          },
+          {
+            text: "Medir apenas a bateria para ver se tem carga suficiente.",
+            correct: false,
+            feedback: "Bateria é importante para partida, mas não é a primeira suspeita numa queda brusca de tensão em carga."
+          },
+          {
+            text: "Aumentar a rotação para tentar levantar a tensão manualmente.",
+            correct: false,
+            feedback: "Ajustar rotação não resolve um problema direto de excitação ou sensing."
+          },
+          {
+            text: "Desmontar diodos do alternador antes de validar sinais básicos.",
+            correct: false,
+            feedback: "Testes invasivos devem vir depois de checar sinais simples e conexões."
+          }
+        ]
+      },
+      // P9
+      {
+        text: "O gerador está estabilizado, mas o contator/BTB não fecha para assumir as cargas essenciais. O que verificar primeiro?",
+        options: [
+          {
+            text: "Intertravamentos, permissivas e relés de comando que liberam o fechamento.",
+            correct: true,
+            feedback: "Isso aí. Sem permissivas atendidas, o comando simplesmente não autoriza o fechamento."
+          },
+          {
+            text: "Ajustar tensão de saída imaginando que isso destrava o contator.",
+            correct: false,
+            feedback: "Se a lógica de comando estiver bloqueada, apenas mudar tensão não libera o fechamento."
+          },
+          {
+            text: "Forçar o fechamento manual do contator para testar se 'aguenta'.",
+            correct: false,
+            feedback: "Forçar contatores é perigoso. Confira primeiro a lógica de proteção e permissivas."
+          },
+          {
+            text: "Alterar curvas de proteção sem diagnosticar a causa do bloqueio.",
+            correct: false,
+            feedback: "Mudar proteção sem diagnóstico pode mascarar problemas reais."
+          }
+        ]
+      },
+      // P10
+      {
+        text: "O gerador assume carga e, em poucos minutos, a temperatura da água sobe rapidamente até alarmar. Qual é a análise inicial correta?",
+        options: [
+          {
+            text: "Verificar fluxo do sistema de arrefecimento: ventilador, correias, mangueiras e nível de água.",
+            correct: true,
+            feedback: "Correto. Um sistema de arrefecimento deficiente leva ao aquecimento acelerado."
+          },
+          {
+            text: "Abaixar a carga para 'ganhar tempo' sem investigar a causa.",
+            correct: false,
+            feedback: "Reduzir carga pode aliviar, mas não resolve o problema de fundo no arrefecimento."
+          },
+          {
+            text: "Desligar e religar o controlador acreditando ser apenas erro de leitura.",
+            correct: false,
+            feedback: "Confirme o sistema de arrefecimento antes de supor falha de sensor."
+          },
+          {
+            text: "Examinar sensores do alternador antes do sistema de arrefecimento.",
+            correct: false,
+            feedback: "O sintoma descrito aponta diretamente para o sistema de arrefecimento do motor."
+          }
+        ]
+      },
+      // P11
+      {
+        text: "Durante a emergência, ao aplicar uma carga moderada, a tensão cai mais do que o esperado. Qual procedimento vem primeiro?",
+        options: [
+          {
+            text: "Avaliar se o AVR está compensando corretamente e se o sinal de sensing está estável.",
+            correct: true,
+            feedback: "Boa. É importante saber se o AVR está enxergando corretamente a tensão e respondendo à carga."
+          },
+          {
+            text: "Reduzir a carga na tentativa de evitar o problema sem investigar.",
+            correct: false,
+            feedback: "Reduzir carga pode aliviar, mas não explica por que a tensão cai tanto."
+          },
+          {
+            text: "Suspeitar de falha no alternador antes de verificar controladores.",
+            correct: false,
+            feedback: "Verificar controladores e sinais é mais simples do que partir direto para o alternador."
+          },
+          {
+            text: "Ajustar manualmente a rotação acreditando resolver a tensão.",
+            correct: false,
+            feedback: "Ajustar rotação mexe na frequência, não resolve diretamente a regulação de tensão."
+          }
+        ]
+      },
+      // P12
+      {
+        text: "Ao tentar partir em emergência, o controlador exibe mais de um alarme (por exemplo, baixa rotação + baixa pressão de óleo). Qual abordagem é a mais segura?",
+        options: [
+          {
+            text: "Analisar qual alarme aparece primeiro e verificar sensores e permissivas relacionados.",
+            correct: true,
+            feedback: "Correto. Entender a sequência dos alarmes ajuda a identificar a causa raiz."
+          },
+          {
+            text: "Ignorar o alarme inicial e focar apenas na pressão de óleo.",
+            correct: false,
+            feedback: "Ignorar a ordem dos eventos pode confundir o diagnóstico."
+          },
+          {
+            text: "Reiniciar o gerador várias vezes até algum alarme desaparecer.",
+            correct: false,
+            feedback: "Reiniciar sem entender a causa pode só repetir o erro e gerar desgaste."
+          },
+          {
+            text: "Mudar curvas de proteção antes de investigar sensores e condições reais.",
+            correct: false,
+            feedback: "Modificar proteção sem diagnóstico pode comprometer a segurança do sistema."
+          }
+        ]
+      },
+      // P13
+      {
+        text: "O gerador parte normalmente, mas após assumir a carga surge vibração perceptível no conjunto. O que deve ser verificado primeiro?",
+        options: [
+          {
+            text: "Alinhamento do conjunto, estado dos coxins e eventuais folgas estruturais.",
+            correct: true,
+            feedback: "Isso. Vibração excessiva muitas vezes está ligada a alinhamento e suporte mecânico."
+          },
+          {
+            text: "Tensão e frequência, mesmo que já estejam dentro do padrão.",
+            correct: false,
+            feedback: "Tensão e frequência são importantes, mas o sintoma descrito é principalmente mecânico."
+          },
+          {
+            text: "Trocar o filtro de óleo preventivamente.",
+            correct: false,
+            feedback: "Filtro de óleo não é o principal alvo num caso de vibração."
+          },
+          {
+            text: "Ajustar o AVR acreditando que vibração é problema elétrico.",
+            correct: false,
+            feedback: "Vibração está mais ligada à parte mecânica do que à regulação de tensão."
+          }
+        ]
+      },
+      // P14
+      {
+        text: "O gerador entra em carga, mas após alguns minutos o motor apresenta falhas intermitentes (engasgos). Qual é o ponto inicial mais lógico?",
+        options: [
+          {
+            text: "Verificar alimentação de combustível: filtros, mangueiras, registros e possível entrada de ar.",
+            correct: true,
+            feedback: "Exato. Problemas de alimentação são causas frequentes de falhas intermitentes."
+          },
+          {
+            text: "Trocar o sensor de temperatura por suspeita imediata.",
+            correct: false,
+            feedback: "Sensor de temperatura pode falhar, mas não é o primeiro alvo nesse sintoma."
+          },
+          {
+            text: "Ajustar o regime de rotação manualmente tentando 'compensar' as falhas.",
+            correct: false,
+            feedback: "Ajustar rotação não corrige falha de alimentação ou queima."
+          },
+          {
+            text: "Aumentar ainda mais a carga esperando estabilizar o motor.",
+            correct: false,
+            feedback: "Se o motor já está falhando, aumentar carga tende a piorar a situação."
+          }
+        ]
+      },
+      // P15
+      {
+        text: "A rede volta ao normal, mas o sistema não faz a transferência reversa do gerador para a concessionária. Qual passo vem primeiro?",
+        options: [
+          {
+            text: "Validar permissivas de retorno, supervisão de rede e lógica do controlador.",
+            correct: true,
+            feedback: "Correto. Se a rede não for reconhecida ou a lógica estiver bloqueada, a transferência não acontece."
+          },
+          {
+            text: "Reiniciar o controlador para forçar a transferência imediata.",
+            correct: false,
+            feedback: "Reiniciar sem entender a causa pode apenas repetir o comportamento."
+          },
+          {
+            text: "Assumir defeito no contator sem verificar supervisão de rede.",
+            correct: false,
+            feedback: "Antes de culpar o contator, confirme se o sistema julga a rede adequada."
+          },
+          {
+            text: "Reduzir a carga no gerador sem avaliar a lógica de transferência.",
+            correct: false,
+            feedback: "A carga não impede por si só a transferência reversa se a lógica estiver correta."
+          }
+        ]
+      },
+      // P16
+      {
+        text: "Durante a emergência, o controlador mostra tensões desbalanceadas entre fases (por exemplo, 380 V, 335 V, 380 V), mas o motor está estável. Qual é o primeiro ponto a ser investigado?",
+        options: [
+          {
+            text: "Verificar o circuito de sensing de tensão e suas conexões no AVR/controlador.",
+            correct: true,
+            feedback: "Boa. Se o sensing estiver com mau contato ou defeito, a leitura de fase pode ficar distorcida."
+          },
+          {
+            text: "Ajustar a rotação manualmente para tentar 'alinhar' as fases.",
+            correct: false,
+            feedback: "Rotação interfere na frequência, não corrige desbalanceamento de leitura de tensão entre fases."
+          },
+          {
+            text: "Reduzir a carga acreditando que o desbalanceamento desaparecerá sozinho.",
+            correct: false,
+            feedback: "Se o problema estiver na medição, a carga não resolve."
+          },
+          {
+            text: "Desmontar o alternador antes de validar medições e cabos.",
+            correct: false,
+            feedback: "Comece sempre pelas verificações menos invasivas e mais simples."
+          }
+        ]
+      },
+      // P17
+      {
+        text: "O gerador está em pleno funcionamento, mas o controlador perde temporariamente comunicação com alguns módulos (como supervisão ou expansão). Qual postura inicial é correta?",
+        options: [
+          {
+            text: "Verificar integridade dos cabos de comunicação e alimentação dos módulos envolvidos.",
+            correct: true,
+            feedback: "Correto. Falhas intermitentes de comunicação costumam envolver cabos, conectores ou alimentação."
+          },
+          {
+            text: "Suspeitar imediatamente de defeito grave no controlador principal.",
+            correct: false,
+            feedback: "O controlador principal é mais caro e complexo. Antes, descarte problemas simples na rede de comunicação."
+          },
+          {
+            text: "Desligar o gerador em emergência para reiniciar todo o sistema.",
+            correct: false,
+            feedback: "Em emergência, o desligamento deve ser muito bem avaliado. Investigue antes."
+          },
+          {
+            text: "Alterar parâmetros da rede de comunicação (CAN, RS-485) sem diagnóstico.",
+            correct: false,
+            feedback: "Mudar parâmetros sem entender a causa pode complicar o diagnóstico."
+          }
+        ]
+      },
+      // P18
+      {
+        text: "O gerador está estável, mas ao assumir uma nova carga (por exemplo, partida de motor elétrico) a tensão cai abruptamente abaixo do limite permitido. Qual análise inicial faz mais sentido?",
+        options: [
+          {
+            text: "Verificar capacidade do gerador, resposta do AVR e comportamento do regulador sob carga súbita.",
+            correct: true,
+            feedback: "Perfeito. É fundamental saber se o conjunto está dimensionado e regulado para esse tipo de carga."
+          },
+          {
+            text: "Reduzir a rotação para 'evitar esforço' durante a partida.",
+            correct: false,
+            feedback: "Reduzir rotação só piora a frequência e não resolve a queda de tensão."
+          },
+          {
+            text: "Pressupor falha no alternador sem avaliar o tipo de carga aplicada.",
+            correct: false,
+            feedback: "Cargas com forte corrente de partida exigem análise de capacidade e ajustes de regulação."
+          },
+          {
+            text: "Aumentar ainda mais a carga para tentar estabilizar a tensão pelo esforço.",
+            correct: false,
+            feedback: "Se a tensão já está caindo demais, mais carga tende a agravar o problema."
+          }
+        ]
+      },
+      // P19
+      {
+        text: "Durante a emergência, o gerador aparentemente sem comando retorna sozinho para o modo 'Auto', como se tivesse recebido um sinal externo. Qual é a investigação correta?",
+        options: [
+          {
+            text: "Checar entradas digitais, lógica remota e sinais externos de comando vindos do quadro.",
+            correct: true,
+            feedback: "Isso mesmo. Algum sinal externo pode estar forçando o retorno ao modo Auto."
+          },
+          {
+            text: "Ajustar tensão e frequência acreditando que é apenas defeito elétrico.",
+            correct: false,
+            feedback: "Modo de operação está ligado à lógica de comando, não só aos parâmetros elétricos."
+          },
+          {
+            text: "Trocar imediatamente o controlador sem avaliar sinais de comando.",
+            correct: false,
+            feedback: "Trocar o controlador sem investigar sinais é precipitado e caro."
+          },
+          {
+            text: "Reduzir a carga no gerador até que o comportamento pare.",
+            correct: false,
+            feedback: "A carga não justifica por si só a troca de modo. É preciso avaliar a lógica de comandos."
+          }
+        ]
+      },
+      // P20
+      {
+        text: "O gerador assume a emergência, mas ao aplicar uma carga aparentemente pequena já dispara alarme de sobrecorrente. Qual é o passo inicial de diagnóstico?",
+        options: [
+          {
+            text: "Verificar calibração das proteções, transformadores de corrente (TCs) e integridade dos cabos de medição.",
+            correct: true,
+            feedback: "Correto. Um erro de ajuste ou de medição pode fazer a proteção atuar antes do devido."
+          },
+          {
+            text: "Reduzir a carga até que a proteção pare de atuar, sem investigar.",
+            correct: false,
+            feedback: "Isso apenas contorna o sintoma, mas não resolve a causa."
+          },
+          {
+            text: "Suspeitar imediatamente de defeito no alternador, sem medir nada.",
+            correct: false,
+            feedback: "Antes de acusar o alternador, confirme se o sistema de medição e proteção está ajustado corretamente."
+          },
+          {
+            text: "Alterar o valor de sobrecorrente para bem acima do nominal, para não atuar.",
+            correct: false,
+            feedback: "Elevar demais a proteção pode colocar o gerador e a instalação em risco."
+          }
+        ]
+      }
+    ];
+
+    // =========================
+    // ESTADO DO JOGO
+    // =========================
+    let currentIndex = 0;
+    let score = 0;
+    let answered = false;
+
+    const menuScreen = document.getElementById("menuScreen");
+    const gameScreen = document.getElementById("gameScreen");
+    const endScreen = document.getElementById("endScreen");
+    const creditsScreen = document.getElementById("creditsScreen");
+
+      const mentorBox = document.getElementById("mentorBox");
+    const scoreEl = document.getElementById("score");
+    const questionEl = document.getElementById("question");
+    const optionsEl = document.getElementById("options");
+    const feedbackEl = document.getElementById("feedback");
+    const nextBtn = document.getElementById("nextBtn");
+    const retryBtn = document.getElementById("retryBtn");
+    const finalMessageEl = document.getElementById("finalMessage");
+    const finalScoreEl = document.getElementById("finalScore");
+    function setMentorMessage(text) {
+      if (mentorBox) mentorBox.textContent = "🧢 Germano: " + text;
+    }
+
+
+    // =========================
+    // FUNÇÕES DE TELA
+    // =========================
+    function showOnly(screen) {
+      menuScreen.style.display = "none";
+      gameScreen.style.display = "none";
+      endScreen.style.display = "none";
+      creditsScreen.style.display = "none";
+      screen.style.display = "block";
+    }
+
+    function backToMenu() {
+      showOnly(menuScreen);
+    }
+
+    function showCredits() {
+      showOnly(creditsScreen);
+    }
+
+    // =========================
+    // UTIL – EMBARALHAR
+    // =========================
+    function shuffleArray(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    // =========================
+    // LÓGICA DO JOGO
+    // =========================
+     function startGame() {
+      currentIndex = 0;
+      score = 0;
+      answered = false;
+      showOnly(gameScreen);
+      setMentorMessage("Bem-vindo ao plantão de emergência. Leia cada ocorrência com calma e escolha a melhor decisão.");
+      loadQuestion();
+    }
+
+
+    function restartGame() {
+      startGame();
+    }
+
+    function updateScore() {
+      const total = questionsEmergencia.length;
+      scoreEl.textContent = "Ocorrência " + (currentIndex + 1) + " de " + total + " • Pontos: " + score;
+    }
+
+     function loadQuestion() {
+      answered = false;
+      feedbackEl.textContent = "";
+      nextBtn.style.display = "none";
+      if (retryBtn) retryBtn.style.display = "none";
+
+      const total = questionsEmergencia.length;
+      const numero = currentIndex + 1;
+      setMentorMessage("Ocorrência " + numero + " de " + total + ". Analise a situação como se estivesse no quadro de verdade.");
+
+      const q = questionsEmergencia[currentIndex];
+      questionEl.textContent = q.text;
+      optionsEl.innerHTML = "";
+
+      // cria lista de índices e embaralha
+      const indices = q.options.map((_, i) => i);
+      const shuffled = shuffleArray(indices);
+
+      shuffled.forEach((idx) => {
+        const opt = q.options[idx];
+        const btn = document.createElement("button");
+        btn.className = "option-btn";
+        btn.textContent = opt.text;
+        btn.onclick = function () {
+          selectOption(idx);
+        };
+        optionsEl.appendChild(btn);
+      });
+
+      updateScore();
+    }
+
+
+        function selectOption(index) {
+      if (answered) return;
+
+      const q = questionsEmergencia[currentIndex];
+      const chosen = q.options[index];
+
+      answered = true;
+
+      if (chosen.correct) {
+        score++;
+        feedbackEl.textContent = "✅ " + chosen.feedback;
+        setMentorMessage("Boa decisão, técnico. É esse tipo de leitura que salva gerador em plantão real.");
+        nextBtn.style.display = "inline-block";    // vai para a próxima
+        if (retryBtn) retryBtn.style.display = "none";
+      } else {
+        feedbackEl.textContent = "❌ " + chosen.feedback;
+        setMentorMessage("Quase. Lembra: em emergência, o primeiro passo é entender a causa antes de insistir.");
+        // oferece segunda chance
+        if (retryBtn) retryBtn.style.display = "inline-block";
+        nextBtn.style.display = "none";
+      }
+
+      updateScore();
+    }
+
+
+    function endGame() {
+      showOnly(endScreen);
+      const total = questionsEmergencia.length;
+      let mensagem;
+
+      if (score === total) {
+        mensagem = "Plantão perfeito! Você tomou todas as decisões corretas neste módulo básico.";
+      } else if (score > total / 2) {
+        mensagem = "Bom desempenho. Para um módulo básico, você mostrou boa leitura de emergência.";
+      } else {
+        mensagem = "Resultado abaixo do ideal. Como é um modo básico, vale repetir e treinar a lógica de decisão.";
+      }
+
+      finalMessageEl.textContent = mensagem + " — Germano.";
+      finalScoreEl.textContent = "Pontuação final: " + score + " de " + total + " ocorrências.";
+      setMentorMessage("Plantão encerrado. Quando quiser, voltamos a treinar juntos.");
+    }
+
+
+    // Botão 'Próxima ocorrência'
+    nextBtn.addEventListener("click", function () {
+      currentIndex++;
+      if (currentIndex < questionsEmergencia.length) {
+        loadQuestion();
+      } else {
+        endGame();
+      }
+    });
+
+    // Botão 'Tentar novamente esta ocorrência'
+    if (retryBtn) {
+      retryBtn.addEventListener("click", function () {
+        // Recarrega a mesma pergunta, com alternativas embaralhadas de novo
+        loadQuestion();
+      });
+    }
+
+    // Tela inicial
+    showOnly(menuScreen);
+  </script>
+</body>
+</html>
